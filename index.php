@@ -1,127 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>HTML5 Form</title>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-<script src="js/jquery.validate.js"></script>
-<script src="js/jquery.placeholder.js"></script>
-<script src="js/jquery.form.js"></script>
-<link rel="stylesheet" href="css/style.css">
-<script>
-$(function(){
-$('#contact').validate({
-submitHandler: function(form) {
-    $(form).ajaxSubmit({
-    url: 'process.php',
-    success: function() {
-    $('#contact').hide();
-    $('#contact-form').append("<p class='thanks'>Thanks! Your request has been sent.</p>")
-    }
-    });
-    }
-});         
-});
-</script>
-</head>
+<html lang="en" ng-app="myApp">
+	<head>
+		<meta charset="utf-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+			<meta name="viewport" content="width=device-width,initial-scale=1" />
+			<title>No.1 Push Notification Service - Open Source API</title>
 
-<body>
+			<!-- Bootstrap -->
+			<link href="css/bootstrap.min.css" rel="stylesheet" />
+			<link href="css/custom.css" rel="stylesheet" />
+			<link href="css/toaster.css" rel="stylesheet" />
+			<style>
+				a {
+				color: orange;
+				}
+			</style>
+			<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media 
+				queries -->
+			<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+			<!--[if lt IE 9]><link href= "css/bootstrap-theme.css"rel= "stylesheet" 
+				> <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script> 
+				<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script> 
+				<![endif] -->
+	</head>
 
-    <h1>Send Your Notification</h1>
-    <span id="wn-unsupported" class="hidden">API not supported</span>
+	<body ng-cloak="">
+		<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="row">
+					<div class="navbar-header col-md-8">
+						<button type="button" class="navbar-toggle" toggle="collapse"
+							target=".navbar-ex1-collapse">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" rel="home" title="Home">Home</a>
+					</div>
+					<div class="navbar-header col-md-2">
+						<a class="navbar-brand" rel="home" title="Documentation" href="#">Documentation</a>
+					</div>
+					<div class="navbar-header col-md-2">
+						<a class="navbar-brand" rel="home" title="Download" href="#">Download</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div>
+			<div class="container" style="margin-top:20px;">
 
-	<div id="contact-form">	
+				<div data-ng-view="" id="ng-view" class="slide-animation"></div>
 
-	<form id="contact" method="post" action="">
-		<fieldset>	
-			<h2>Your Details</h2>
-			<label for="name">Name</label>
-			<input type="text" name="name" placeholder="Full Name" title="Enter your name" class="required">
-
-			<label for="email">E-mail</label>
-			<input type="email" name="email" placeholder="yourname@domain.com" title="Enter your e-mail address" class="required email">
-			
-			<label for="website">Website</label>
-			<input type="url" name="url" placeholder="http://">
-			
-			<br><br>
-			<h2>Notification Details</h2>
-			<label for="title">Title:</label>
-			<input type="text" id="title" name="title" class="required" />
-
-			<label for="body">Body:</label>
-			<textarea id="body" name="body" class="required"></textarea>
-		  
-			<h2>Logs</h2>
-			<div id="log"><i>trigger the transaction to see logs here</i></div>
-			
-			<a id="clear-log" class="button">Clear log</a>
-			<button id="button-wn-show-preset" class="button">Preset Notification</button>
-			<input type="submit" id="button-wn-show-custom" class="button" value="Show Notification" />
-
-	</fieldset>
-	</form>
-
+			</div>
+	</body>
 	
-</div><!-- /end #contact-form -->
-
-<script src="js/modernizr-min.js"></script>
-
-<script>
-	if (!Modernizr.input.placeholder){
-		$('input[placeholder], textarea[placeholder]').placeholder();
-	}
-</script>
-
-    <script>
-      if (!('Notification' in window)) {
-        document.getElementById('wn-unsupported').classList.remove('hidden');
-        document.getElementById('button-wn-show-preset').setAttribute('disabled', 'disabled');
-        document.getElementById('button-wn-show-custom').setAttribute('disabled', 'disabled');
-      } else {
-        var log = document.getElementById('log');
-        var notificationEvents = ['onclick', 'onshow', 'onerror', 'onclose'];
-
-        function notifyUser(event) {
-          var title;
-          var options;
-
-          event.preventDefault();
-
-          if (event.target.id === 'button-wn-show-preset') {
-            title = 'Email received';
-            options = {
-              body: 'You have a total of 3 unread emails',
-              tag: 'preset',
-              icon: 'mail-icon-128.png'
-            };
-          } else {
-            title = document.getElementById('title').value;
-            options = {
-              body: document.getElementById('body').value,
-              tag: 'custom',
-			  icon: 'mail-icon-128.png'
-            };
-          }
-
-          Notification.requestPermission(function() {
-            var notification = new Notification(title, options);
-
-            notificationEvents.forEach(function(eventName) {
-              notification[eventName] = function(event) {
-                log.innerHTML = 'Event "' + event.type + '" triggered for notification "' + notification.tag + '"<br />' + log.innerHTML;
-              };
-            });
-          });
-        }
-
-        document.getElementById('button-wn-show-preset').addEventListener('click', notifyUser);
-        document.getElementById('button-wn-show-custom').addEventListener('click', notifyUser);
-        document.getElementById('clear-log').addEventListener('click', function() {
-          log.innerHTML = ''; 
-        });
-      }
-    </script>
+	<toaster-container toaster-options="{'time-out': 3000}"></toaster-container>
 	
-</body>
+	<!-- Libs Used in the project-->
+	<script src="js/angular.min.js"></script>
+	<script src="js/angular-route.min.js"></script>
+	<script src="js/angular-animate.min.js"></script>
+	<script src="js/toaster.js"></script>
+	<script src="app/app.js"></script>
+	<script src="app/data.js"></script>
+	<script src="app/directives.js"></script>
+	<script src="app/authCtrl.js"></script>
 </html>
+
