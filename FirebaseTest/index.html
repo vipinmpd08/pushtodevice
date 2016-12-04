@@ -99,7 +99,12 @@ limitations under the License.
 <script>
   // [START get_messaging_object]
   // Retrieve Firebase Messaging object.
-  const messaging = firebase.messaging();
+  navigator.serviceworker.register('/pushtodevice/FirebaseTest/firebase-messaging-sw.js')
+  .then(function(registration) {
+    const messaging = firebase.messaging();
+    messaging.useServiceWorker(registration);
+   });
+ 
   // [END get_messaging_object]
 
   // IDs of divs that display Instance ID token UI or request permission UI.
