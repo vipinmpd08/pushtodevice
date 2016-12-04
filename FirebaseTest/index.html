@@ -99,11 +99,13 @@ limitations under the License.
 <script>
   // [START get_messaging_object]
   // Retrieve Firebase Messaging object.
+  const messaging = firebase.messaging();
+  
+  //Updating the service worker
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/pushtodevice/FirebaseTest/firebase-messaging-sw.js').then(function(registration) {
     // Registration was successful
     console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    const messaging = firebase.messaging();
     messaging.useServiceWorker(registration);    
   }).catch(function(err) {
     // registration failed :(
