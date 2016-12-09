@@ -1,5 +1,5 @@
 # Open Source Push Notification API
-Hybrid Portal using HTML5 and PHP to Send Web based Push Notification
+Hybrid Portal using HTML5 and PHP to Send Web based Push Notification using Firebase Google Cloud Messaging Services.
 
 # Browser Support
 
