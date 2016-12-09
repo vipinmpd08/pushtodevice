@@ -29,4 +29,16 @@ app.controller('authCtrl', function ($scope, $rootScope, $routeParams, $location
             $location.path('login');
         });
     }
+	
+    $scope.sendNotification = function (message) {
+        Data.post('sendNotification', {
+            message: message
+        }).then(function (results) {
+            Data.toast(results);
+            if (results.status == "success") {
+                $location.path('dashboard');
+            }
+        });
+    };
+	
 });

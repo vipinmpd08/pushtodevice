@@ -88,4 +88,69 @@ $app->get('/logout', function() {
     $response["message"] = "Logged out successfully";
     echoResponse(200, $response);
 });
+
+
+$app->post('/sendNotification', function() use ($app) {
+    $response = array();
+    $r = json_decode($app->request->getBody());
+		
+	// API access key from Google API's Console
+	define( 'API_ACCESS_KEY', 'AAAAzrbjF6o:APA91bF9GUzRIOt_xAfYVKcrYisjrqmFIQwn-UlDj5iZMVjcgU3W4lKYkVvTlu9JzoDim4uZKY1gM_q88-PFiBpaMnV_R5GfrhllJUOASK4N-3DoAINS475LJh7_YlZvyTxx9RV9koeoYhSQGJYsKoelFdiS9VRaSg' );
+
+	$registrationIds = array("eZrj5e1IDbY:APA91bE3ptrGl2MTcdrLbNpIF01F75pAudCgDjiEam35V-58-LyO-i3SbQ0lVYePEUuTK90Fmv9IxHrfEHVVvN5sU5O-GWX9hMBX9DW-81_71wzh2ma9y1ULkpwZr2DuH_a7n598zK4F" );
+
+	//echo $_GET['id'];
+	// prep the bundle
+	$msg = array
+	(
+		'title'		=> $r->message->title,
+		'message' 	=> $r->message->body,
+		'subtitle'	=> 'This is a subtitle. subtitle',
+		'tickerText'=> 'Ticker text here...Ticker text here...Ticker text here',
+		'vibrate'	=> 1,
+		'sound'		=> 1,
+		'largeIcon'	=> 'Mail.png',
+		'smallIcon'	=> 'Mail.png',
+		'icon'		=> property_exists($r->message, 'icon') ? $r->message->icon : 'Mail.png',
+		'websiteurl'	=> $r->message->websiteurl,
+		'htmlbody'	=> property_exists($r->message, 'htmlBody') ? $r->message->htmlBody : ''
+	);
+	$fields = array
+	(
+		'registration_ids' 	=> $registrationIds,
+		'data'			=> $msg
+	);
+	 
+	$headers = array
+	(
+		'Authorization: key=' . API_ACCESS_KEY,
+		'Content-Type: application/json'
+	);
+	 
+	$ch = curl_init();
+	
+	if(NULL != $ch) {
+		curl_setopt( $ch,CURLOPT_URL, 'https://android.googleapis.com/gcm/send' );
+		curl_setopt( $ch,CURLOPT_POST, true );
+		curl_setopt( $ch,CURLOPT_HTTPHEADER, $headers );
+		curl_setopt( $ch,CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch,CURLOPT_SSL_VERIFYPEER, false );
+		curl_setopt( $ch,CURLOPT_POSTFIELDS, json_encode( $fields ) );
+		$result = curl_exec($ch );
+		curl_close( $ch );
+		
+		$response["status"] = "success";
+		$response["message"] = "Message pushed successfully. Have fun !";
+		echoResponse(200, $response);			
+	}
+	else {
+        $response["status"] = "error";
+        $response["message"] = "There was some problem in sending the notification";
+        echoResponse(201, $response);		
+	}
+	 
+	
+    //verifyRequiredParams(array('title', 'name', 'body'),$r->message);
+	
+});
 ?>

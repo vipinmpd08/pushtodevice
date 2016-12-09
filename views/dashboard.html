@@ -22,12 +22,60 @@
                         UID: {{uid}}
                         <br/>NAME: {{name}}
                         <br/>E-MAIL: {{email}}
-                        <br/>
+						<br/><br/>
+                        <h4 class="header blue lighter bigger">
+							<i class="icon-coffee green"></i>
+							Subscription Details
+						</h4>						
+						<a ng-click="logout();">View Your API Key</a>
+						<br/><a ng-click="logout();">View Subscribed Users</a>
+                        <br/><br/>
                         <a ng-click="logout();">Logout</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+	
+    <div class="row">
+        <div class="space-6"></div>
+        <div class="col-sm-10 col-sm-offset-1">
+			<form id="contact" name="contactForm">
+				<fieldset>	
+					<h2>Send Notification Now!</h2>
+					<label for="name">Name</label>
+					<input type="text" name="name" placeholder="Full Name" ng-model="message.name" title="Enter your name" ng-required="true" class="required">
+					<small class="errorMessage" data-ng-show="contactForm.name.$dirty && contactForm.name.$invalid"> Enter valid name.</small>
+
+					<label for="email">E-mail</label>
+					<input type="email" name="email" placeholder="yourname@domain.com" ng-model="message.email" title="Enter your e-mail address" class="required email">
+					<span ng-show="contactForm.email.$error.email" class="help-inline">Email is not valid</span> 
+					
+					<label for="name">Icon Url</label>
+					<input type="text" name="icon" placeholder="Enter full icon url with http://" ng-model="message.icon" title="Enter your icon" class="required">
+					<small class="errorMessage" data-ng-show="contactForm.icon.$dirty && contactForm.icon.$invalid"> Enter valid icon.</small>
+					
+					<label for="website">Website (click back url)</label>
+					<input type="text" ng-model="message.websiteurl" name="websiteurl" placeholder="http://" ng-required="true" >
+					
+					<br><br>
+					<h2>Notification Details</h2>
+					<label for="title">Title:</label>
+					<input type="text" ng-model="message.title" id="title" name="title" class="required" ng-required="true"/>
+					<small class="errorMessage" data-ng-show="contactForm.title.$dirty && contactForm.title.$invalid" > Enter valid title.</small>
+
+					<label for="body">Body:</label>
+					<textarea id="body" ng-model="message.body" name="body" class="required" ng-required="true"></textarea>
+					<small class="errorMessage" data-ng-show="contactForm.body.$dirty && contactForm.body.$invalid"> Enter valid message.</small>
+				  
+					<label for="htmlBody">HTML Body:</label>
+					<textarea id="htmlBody" ng-model="message.htmlBody" name="htmlBody" class="required"></textarea>
+					 
+					<input type="button" ng-click="sendNotification(message)" id="button-wn-show-custom" class="button" value="Notificaty Now !" data-ng-disabled="contactForm.$invalid" />
+
+			</fieldset>
+			</form>            
+        </div>
+    </div>	
 </div>
 <!-- /.page-content -->
