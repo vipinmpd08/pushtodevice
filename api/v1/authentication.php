@@ -97,7 +97,7 @@ $app->post('/sendNotification', function() use ($app) {
 	// API access key from Google API's Console
 	define( 'API_ACCESS_KEY', 'AAAAzrbjF6o:APA91bF9GUzRIOt_xAfYVKcrYisjrqmFIQwn-UlDj5iZMVjcgU3W4lKYkVvTlu9JzoDim4uZKY1gM_q88-PFiBpaMnV_R5GfrhllJUOASK4N-3DoAINS475LJh7_YlZvyTxx9RV9koeoYhSQGJYsKoelFdiS9VRaSg' );
 
-	$registrationIds = array("eZrj5e1IDbY:APA91bE3ptrGl2MTcdrLbNpIF01F75pAudCgDjiEam35V-58-LyO-i3SbQ0lVYePEUuTK90Fmv9IxHrfEHVVvN5sU5O-GWX9hMBX9DW-81_71wzh2ma9y1ULkpwZr2DuH_a7n598zK4F" );
+	$registrationIds = array("eZrj5e1IDbY:APA91bE3ptrGl2MTcdrLbNpIF01F75pAudCgDjiEam35V-58-LyO-i3SbQ0lVYePEUuTK90Fmv9IxHrfEHVVvN5sU5O-GWX9hMBX9DW-81_71wzh2ma9y1ULkpwZr2DuH_a7n598zK4F", "fuCcjpA3PfU:APA91bHvpRYoUEzASNHh9KDnMxpCgmaR-lrfygvCSpjy_D9ByIiGGXGoeGPAzEITJbGLs41cZKQym6lTctshPOBTbin2G3Atd8a7Tka7ROdJliADCKKleRp7UFrhJbFdzd1LH_SoxhnL");
 
 	//echo $_GET['id'];
 	// prep the bundle
