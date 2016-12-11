@@ -265,35 +265,37 @@
 
   }
 
-  // Add a message to the messages element.
-  function appendMessage(payload) {
-    const messagesElement = document.querySelector('#messages');
-    const dataHeaderELement = document.createElement('h5');
-    const dataElement = document.createElement('pre');
-    dataElement.style = 'overflow-x:hidden;'
-    dataHeaderELement.textContent = 'Received message:';
-    dataElement.textContent = JSON.stringify(payload, null, 2);
-    messagesElement.appendChild(dataHeaderELement);
-    messagesElement.appendChild(dataElement);
-  }
+	  // Add a message to the messages element.
+	  function appendMessage(payload) {
+		const messagesElement = document.querySelector('#messages');
+		const dataHeaderELement = document.createElement('h5');
+		const dataElement = document.createElement('pre');
+		dataElement.style = 'overflow-x:hidden;'
+		dataHeaderELement.textContent = 'Received message:';
+		dataElement.textContent = JSON.stringify(payload, null, 2);
+		messagesElement.appendChild(dataHeaderELement);
+		messagesElement.appendChild(dataElement);
+	  }
 
-  // Clear the messages element of all children.
-  function clearMessages() {
-    const messagesElement = document.querySelector('#messages');
-    while (messagesElement.hasChildNodes()) {
-      messagesElement.removeChild(messagesElement.lastChild);
-    }
-  }
+	  // Clear the messages element of all children.
+	  function clearMessages() {
+		const messagesElement = document.querySelector('#messages');
+		while (messagesElement.hasChildNodes()) {
+		  messagesElement.removeChild(messagesElement.lastChild);
+		}
+	  }
 
   
-  function pushTokenToDB(currentToken) {
-		var subscribe = {
-            uid: 123,
+	function pushTokenToDB(currentToken) {
+		var subscribeObj = {
+            uid: 187,
             instanceidtoken: currentToken,
             client_ip: $("#clientip").text()
         }
 
-        //$('#target').html('sending..');
+		var subscribeContainer = {
+            subscribe : subscribeObj
+        }
 
         $.ajax({
             url: '../api/v1/addSubscriptions',
@@ -303,25 +305,22 @@
             success: function (data) {
                 $('#messages').html(data.msg);
             },
-            data: JSON.stringify(subscribe)
+            data: JSON.stringify(subscribeContainer)
         });	
-  }
+	}
   
-  function updateUIForPushEnabled(currentToken) {
-    showHideDiv(tokenDivId, true);
-    showHideDiv(permissionDivId, false);
-    showToken(currentToken);
-	
-  }
+	  function updateUIForPushEnabled(currentToken) {
+		showHideDiv(tokenDivId, true);
+		showHideDiv(permissionDivId, false);
+		showToken(currentToken);
+		
+	  }
 
-  function updateUIForPushPermissionRequired() {
-    showHideDiv(tokenDivId, false);
-    showHideDiv(permissionDivId, true);
-  }
+	  function updateUIForPushPermissionRequired() {
+		showHideDiv(tokenDivId, false);
+		showHideDiv(permissionDivId, true);
+	  }
   
-	$.getJSON("https://api.ipify.org/?format=json", function(ipify) {
-		$("#clientip").text(ipify.ip);
-	});  
 
 	resetUI();
   

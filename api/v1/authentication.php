@@ -169,20 +169,14 @@ $app->post('/addSubscriptions', function() use ($app) {
    // verifyRequiredParams(array('email', 'name', 'password'),$r->customer);
     
 	$db = new DbHandler();
-	/*
-    $phone = $r->customer->phone;
-    $name = $r->customer->name;
-    $email = $r->customer->email;
-    $address = $r->customer->address;
-    $password = $r->customer->password;
-	*/
 	
 	$valueObj = (object) array(
-			'uid' => '123', 
-			'instanceidtoken' => 'fjNeURiE3Rg:APA91bEznicXlgaFCOuYgBpwlxHo-HFpSP62A5kTyXN7Iu_x_elehSU3ktN3VZhl-uwgLpkfqKNbh6joAaVsBRk2pEjN6Uw-b-WTVPbjb9K16_TjAm34SsqrxHiIMKIyjiRXBt1mTg87', 
-			'client_ip' => '10.3.4.2' );
+			'uid' => $r->subscribe->uid, 
+			'instanceidtoken' => $r->subscribe->instanceidtoken,
+			'client_ip' => (property_exists($r->subscribe, 'client_ip') && NULL != $r->subscribe->client_ip) ? $r->subscribe->client_ip : get_client_ip()
+	);
 	
-    $isSubExists = $db->getOneRecord("select 1 from subscriptions where instanceidtoken='".$valueObj->instanceidtoken."'");
+    $isSubExists = $db->getOneRecord("select 1 from subscriptions where instanceidtoken='".$valueObj->instanceidtoken."' and uid=".$valueObj->uid);
 
     if(!$isSubExists){
 		$tabble_name = "subscriptions";
@@ -203,4 +197,24 @@ $app->post('/addSubscriptions', function() use ($app) {
         echoResponse(201, $response);
     }
 });
+
+
+function get_client_ip() {
+    $ipaddress = '';
+    if (isset($_SERVER['HTTP_CLIENT_IP']))
+        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_X_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+    else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+    else if(isset($_SERVER['HTTP_FORWARDED']))
+        $ipaddress = $_SERVER['HTTP_FORWARDED'];
+    else if(isset($_SERVER['REMOTE_ADDR']))
+        $ipaddress = $_SERVER['REMOTE_ADDR'];
+    else
+        $ipaddress = 'UNKNOWN';
+    return $ipaddress;
+}
 ?>
