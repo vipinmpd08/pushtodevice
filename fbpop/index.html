@@ -302,7 +302,7 @@
             success: function (data) {
                 $('#messages').html(data.msg);
             },
-            data: subscribe
+            data: JSON.stringify(subscribe)
         });	
   }
   
