@@ -10,6 +10,19 @@ class DbHandler {
         $db = new dbConnect();
         $this->conn = $db->connect();
     }
+	
+    /**
+     * Fetching single record
+     */
+    public function getRecords($query) {
+        $r = $this->conn->query($query) or die($this->conn->error.__LINE__);
+        while($row = $r->fetch_array())
+		{
+			$rows[] = $row;
+		}
+		return $rows;    
+    }
+	
     /**
      * Fetching single record
      */
@@ -55,12 +68,14 @@ public function getSession(){
         $sess["uid"] = $_SESSION['uid'];
         $sess["name"] = $_SESSION['name'];
         $sess["email"] = $_SESSION['email'];
+		$sess["fb_apiaccesskey"] = $_SESSION['fb_apiaccesskey'];
     }
     else
     {
         $sess["uid"] = '';
         $sess["name"] = 'Guest';
         $sess["email"] = '';
+		$sess["fb_apiaccesskey"] = '';
     }
     return $sess;
 }

@@ -16,7 +16,7 @@ $app->post('/login', function() use ($app) {
     $db = new DbHandler();
     $password = $r->customer->password;
     $email = $r->customer->email;
-    $user = $db->getOneRecord("select uid,name,password,email,created from customers_auth where phone='$email' or email='$email'");
+    $user = $db->getOneRecord("select uid,name,password,email,created,fb_apiaccesskey from customers_auth where phone='$email' or email='$email'");
     if ($user != NULL) {
         if(passwordHash::check_password($user['password'],$password)){
         $response['status'] = "success";
@@ -25,12 +25,14 @@ $app->post('/login', function() use ($app) {
         $response['uid'] = $user['uid'];
         $response['email'] = $user['email'];
         $response['createdAt'] = $user['created'];
+		$response['fb_apiaccesskey'] = $user['fb_apiaccesskey'];
         if (!isset($_SESSION)) {
             session_start();
         }
         $_SESSION['uid'] = $user['uid'];
         $_SESSION['email'] = $email;
         $_SESSION['name'] = $user['name'];
+		$_SESSION['fb_apiaccesskey'] = $user['fb_apiaccesskey'];
         } else {
             $response['status'] = "error";
             $response['message'] = 'Login failed. Incorrect credentials';
@@ -81,6 +83,8 @@ $app->post('/signUp', function() use ($app) {
         echoResponse(201, $response);
     }
 });
+
+
 $app->get('/logout', function() {
     $db = new DbHandler();
     $session = $db->destroySession();
@@ -92,15 +96,23 @@ $app->get('/logout', function() {
 
 $app->post('/sendNotification', function() use ($app) {
     $response = array();
+	$registrationIds = array();
     $r = json_decode($app->request->getBody());
-		
-	// API access key from Google API's Console
-	define( 'API_ACCESS_KEY', 'AAAAzrbjF6o:APA91bF9GUzRIOt_xAfYVKcrYisjrqmFIQwn-UlDj5iZMVjcgU3W4lKYkVvTlu9JzoDim4uZKY1gM_q88-PFiBpaMnV_R5GfrhllJUOASK4N-3DoAINS475LJh7_YlZvyTxx9RV9koeoYhSQGJYsKoelFdiS9VRaSg' );
+			
+	//Get all Subscriptions for this user
+	$db = new DbHandler();
+    $session = $db->getSession();
+	$subscriptions = $db->getRecords("select instanceidtoken from subscriptions where uid=".$session['uid']);
 
-	$registrationIds = array("eZrj5e1IDbY:APA91bE3ptrGl2MTcdrLbNpIF01F75pAudCgDjiEam35V-58-LyO-i3SbQ0lVYePEUuTK90Fmv9IxHrfEHVVvN5sU5O-GWX9hMBX9DW-81_71wzh2ma9y1ULkpwZr2DuH_a7n598zK4F", "fuCcjpA3PfU:APA91bHvpRYoUEzASNHh9KDnMxpCgmaR-lrfygvCSpjy_D9ByIiGGXGoeGPAzEITJbGLs41cZKQym6lTctshPOBTbin2G3Atd8a7Tka7ROdJliADCKKleRp7UFrhJbFdzd1LH_SoxhnL");
 
-	//echo $_GET['id'];
-	// prep the bundle
+	//Prepare Registration IDs
+	if(NULL != $subscriptions) {
+		foreach($subscriptions as $subscriptionRow) { 
+			array_push($registrationIds , $subscriptionRow['instanceidtoken']); 
+		}
+	}
+ 
+	// prep the message bundle
 	$msg = array
 	(
 		'title'		=> $r->message->title,
@@ -109,8 +121,6 @@ $app->post('/sendNotification', function() use ($app) {
 		'tickerText'=> 'Ticker text here...Ticker text here...Ticker text here',
 		'vibrate'	=> 1,
 		'sound'		=> 1,
-		'largeIcon'	=> 'Mail.png',
-		'smallIcon'	=> 'Mail.png',
 		'icon'		=> property_exists($r->message, 'icon') ? $r->message->icon : 'Mail.png',
 		'websiteurl'	=> $r->message->websiteurl,
 		'htmlbody'	=> property_exists($r->message, 'htmlBody') ? $r->message->htmlBody : ''
@@ -119,16 +129,15 @@ $app->post('/sendNotification', function() use ($app) {
 	(
 		'registration_ids' 	=> $registrationIds,
 		'data'			=> $msg
-	);
-	 
+	);	 
 	$headers = array
 	(
-		'Authorization: key=' . API_ACCESS_KEY,
+		'Authorization: key=' . $session['fb_apiaccesskey'],
 		'Content-Type: application/json'
 	);
 	 
-	$ch = curl_init();
-	
+	//Send the message
+	$ch = curl_init();	
 	if(NULL != $ch) {
 		curl_setopt( $ch,CURLOPT_URL, 'https://android.googleapis.com/gcm/send' );
 		curl_setopt( $ch,CURLOPT_POST, true );
@@ -152,5 +161,46 @@ $app->post('/sendNotification', function() use ($app) {
 	
     //verifyRequiredParams(array('title', 'name', 'body'),$r->message);
 	
+});
+
+$app->get('/addSubscriptions', function() use ($app) {
+    $response = array();
+    $r = json_decode($app->request->getBody());
+   // verifyRequiredParams(array('email', 'name', 'password'),$r->customer);
+    
+	$db = new DbHandler();
+	/*
+    $phone = $r->customer->phone;
+    $name = $r->customer->name;
+    $email = $r->customer->email;
+    $address = $r->customer->address;
+    $password = $r->customer->password;
+	*/
+	
+	$valueObj = (object) array(
+			'uid' => '123', 
+			'instanceidtoken' => 'fjNeURiE3Rg:APA91bEznicXlgaFCOuYgBpwlxHo-HFpSP62A5kTyXN7Iu_x_elehSU3ktN3VZhl-uwgLpkfqKNbh6joAaVsBRk2pEjN6Uw-b-WTVPbjb9K16_TjAm34SsqrxHiIMKIyjiRXBt1mTg87', 
+			'client_ip' => '10.3.4.2' );
+	
+    $isSubExists = $db->getOneRecord("select 1 from subscriptions where instanceidtoken='".$valueObj->instanceidtoken."'");
+
+    if(!$isSubExists){
+		$tabble_name = "subscriptions";
+        $column_names = array('uid', 'instanceidtoken', 'client_ip');
+        $result = $db->insertIntoTable($valueObj, $column_names, $tabble_name);
+        if ($result != NULL) {
+            $response["status"] = "success";
+            $response["message"] = "Subscribed successfully";           
+            echoResponse(200, $response);
+        } else {
+            $response["status"] = "error";
+            $response["message"] = "Failed to Subscribe";
+            echoResponse(201, $response);
+        }            
+    }else{
+        $response["status"] = "error";
+        $response["message"] = "Subscription exists already!";
+        echoResponse(201, $response);
+    }
 });
 ?>
