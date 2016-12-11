@@ -299,6 +299,7 @@
             url: '../api/v1/addSubscriptions',
             type: 'post',
             dataType: 'json',
+			contentType: 'application/json',
             success: function (data) {
                 $('#messages').html(data.msg);
             },
