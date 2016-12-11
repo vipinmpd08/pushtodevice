@@ -163,7 +163,7 @@ $app->post('/sendNotification', function() use ($app) {
 	
 });
 
-$app->get('/addSubscriptions', function() use ($app) {
+$app->post('/addSubscriptions', function() use ($app) {
     $response = array();
     $r = json_decode($app->request->getBody());
    // verifyRequiredParams(array('email', 'name', 'password'),$r->customer);
