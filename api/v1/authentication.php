@@ -149,6 +149,7 @@ $app->post('/sendNotification', function() use ($app) {
 		curl_close( $ch );
 		
 		$response["status"] = "success";
+		$response["registrationIds"] = $registrationIds;
 		$response["message"] = "Message pushed successfully. Have fun !";
 		echoResponse(200, $response);			
 	}
